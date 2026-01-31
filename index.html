@@ -1,10 +1,332 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Для тебя</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playfair+Display:ital,wght@1,400;1,700&display=swap" rel="stylesheet">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #fff0f5; /* Lavender Blush */
+            color: #592e34; /* Dark Burgundy */
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* --- FALLING HEARTS ANIMATION --- */
+        .heart {
+            position: fixed;
+            top: -10px;
+            color: #ffb7b2;
+            font-size: 1.5rem;
+            z-index: 1;
+            pointer-events: none;
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(105vh); }
+        }
+
+        /* --- INTRO SCREEN --- */
+        #welcome-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100vh;
+            background: #720026; /* Deep Romantic Red */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 1s ease;
+        }
+
+        #welcome-screen h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            color: white;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .action-btn {
+            background: white;
+            color: #720026;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
+
+        .action-btn:active { transform: scale(0.95); }
+
+        /* --- MAIN CONTENT --- */
+        #main-content {
+            opacity: 0;
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+            transition: opacity 1s ease;
+            display: none;
+            position: relative;
+            z-index: 10;
+            padding-bottom: 60px;
+        }
+
+        .photo-card {
+            background: white;
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 35px;
+            box-shadow: 0 8px 20px rgba(114, 0, 38, 0.1);
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.8s ease;
+        }
+
+        .photo-card img {
+            width: 100%;
+            border-radius: 10px;
+            display: block;
+        }
+
+        .caption {
+            padding: 20px 5px 5px 5px;
+            text-align: center;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            font-style: italic;
+            color: #720026;
+        }
+
+        /* --- COMPLIMENT GENERATOR --- */
+        .interactive-section {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 30px 20px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(114, 0, 38, 0.15);
+        }
+
+        #compliment-text {
+            font-size: 1.3rem;
+            font-weight: 500;
+            min-height: 60px;
+            margin-bottom: 20px;
+            color: #ce4257;
+        }
+
+        /* --- SECRET MODAL --- */
+        #secret-modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 2000; /* Top priority */
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        #secret-content {
+            background: white;
+            padding: 20px;
+            width: 85%;
+            max-width: 400px;
+            border-radius: 20px;
+            text-align: center;
+            animation: popIn 0.4s ease;
+            box-shadow: 0 0 30px rgba(255,255,255,0.2);
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .visible {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+        }
+    </style>
 </head>
 <body>
-$END$
+
+<div id="welcome-screen">
+    <h1>Привет! 👋</h1>
+    <p style="color: #ffcad4; margin-bottom: 25px; font-size: 0.9rem;">
+        Я тут кое-что сделал для тебя...
+    </p>
+    <button class="action-btn" onclick="startExperience()">Открыть</button>
+</div>
+
+<audio id="bg-music" loop>
+    <source src="music.mp3" type="audio/mpeg">
+</audio>
+
+<div id="main-content">
+
+    <div class="photo-card">
+        <img src="1.jpg" alt="First Flowers">
+        <div class="caption">
+            Тот самый день... <br>Ты и цветы — идеальное сочетание.
+        </div>
+    </div>
+
+    <div class="photo-card">
+        <img src="2.jpg" alt="Black and White">
+        <div class="caption">
+            В тебе есть та редкая красота, которая не нуждается в красках.
+        </div>
+    </div>
+
+    <div class="photo-card">
+        <img src="3.jpg" alt="Mirror">
+        <div class="caption">
+            Даже зеркало не может отвести от тебя взгляд.
+        </div>
+    </div>
+
+    <div class="photo-card">
+        <img src="4.jpg" alt="Smile">
+        <div class="caption">
+            Эта скромная улыбка — самое милое, что я видел.
+        </div>
+    </div>
+
+    <div class="interactive-section">
+        <h3 style="color:#720026">Что я думаю о тебе?</h3>
+        <br>
+        <div id="compliment-text">Нажми на сердечко 👇</div>
+        <button class="action-btn" style="background: #720026; color: white;" onclick="generateCompliment()">❤️</button>
+    </div>
+
+    <div style="text-align: center; font-size: 0.8rem; color: #a45a66; margin-top: 40px;">
+        Создано специально для тебя
+        <span onclick="openSecret()" style="cursor: pointer; font-size: 1.2rem; margin-left: 5px;">🤫</span>
+    </div>
+
+</div>
+
+<div id="secret-modal" onclick="closeSecret()">
+    <div id="secret-content" onclick="event.stopPropagation()">
+        <h3 style="color: #720026; margin-bottom: 10px;">Ты нашла секрет! 🎉</h3>
+        <img src="secret.jfif" alt="Secret Photo" style="width: 100%; border-radius: 10px; margin-bottom: 15px;">
+
+        <p style="color: #555; font-size: 0.95rem; margin-bottom: 15px;">
+            Мой любимый момент, которого еще не было... но обязательно будет.
+        </p>
+
+        <button class="action-btn" onclick="closeSecret()" style="font-size: 0.9rem; padding: 10px 25px;">Закрыть</button>
+    </div>
+</div>
+
+<script>
+    // --- ROMANTIC COMPLIMENTS ---
+    const compliments = [
+        "Ты делаешь мир вокруг себя ярче",
+        "Твоя улыбка это что-то невероятное",
+        "У тебя потрясающее чувство стиля",
+        "Ты вдохновляешь меня быть лучше",
+        "У тебя очень добрая и искренняя душа",
+        "Твой смех самый лучший звук",
+        "Ты особенная, и я это сразу заметил",
+        "У тебя очень красивые и выразительные глаза",
+        "Ты самое приятное событие за последнее время",
+        "В тебе чувствуется невероятная сила и нежность одновременно",
+        "Ты заставляешь меня улыбаться, просто когда я о тебе думаю",
+        "Ты очень женственная и грациозная",
+    ];
+
+    let lastIndex = -1;
+
+    function generateCompliment() {
+        const textElement = document.getElementById('compliment-text');
+        let randomIndex;
+
+        // Ensure we don't get the same compliment twice in a row
+        do {
+            randomIndex = Math.floor(Math.random() * compliments.length);
+        } while (randomIndex === lastIndex);
+
+        lastIndex = randomIndex;
+
+        textElement.style.opacity = 0;
+        setTimeout(() => {
+            textElement.innerText = compliments[randomIndex];
+            textElement.style.opacity = 1;
+        }, 300);
+    }
+
+    // --- START EXPERIENCE ---
+    function startExperience() {
+        const music = document.getElementById('bg-music');
+        music.volume = 0.5;
+        music.play().catch(e => console.log(e));
+
+        const welcome = document.getElementById('welcome-screen');
+        welcome.style.opacity = '0';
+
+        // Start hearts
+        setInterval(createHeart, 300);
+
+        setTimeout(() => {
+            welcome.style.display = 'none';
+            const main = document.getElementById('main-content');
+            main.style.display = 'block';
+            setTimeout(() => {
+                main.style.opacity = '1';
+                revealScroll();
+            }, 50);
+        }, 1000);
+    }
+
+    // --- FALLING HEARTS ---
+    function createHeart() {
+        const heart = document.createElement('div');
+        heart.classList.add('heart');
+        heart.innerText = '❤️';
+        heart.style.left = Math.random() * 100 + "vw";
+        heart.style.animationDuration = Math.random() * 2 + 3 + "s";
+        heart.style.opacity = Math.random();
+        heart.style.fontSize = Math.random() * 10 + 10 + "px";
+
+        document.body.appendChild(heart);
+
+        setTimeout(() => { heart.remove(); }, 5000);
+    }
+
+    // --- SECRET FUNCTIONS ---
+    function openSecret() {
+        document.getElementById('secret-modal').style.display = 'flex';
+    }
+
+    function closeSecret() {
+        document.getElementById('secret-modal').style.display = 'none';
+    }
+
+    // --- SCROLL REVEAL ---
+    function revealScroll() {
+        const cards = document.querySelectorAll('.photo-card');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { threshold: 0.1 });
+        cards.forEach(card => observer.observe(card));
+    }
+</script>
 </body>
 </html>
